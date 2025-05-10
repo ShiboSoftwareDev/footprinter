@@ -37321,11 +37321,11 @@ var solderjumper = (params) => {
         const from = pins[i];
         const to = pins[i + 1];
         if (typeof from === "number" && typeof to === "number" && !isNaN(from) && !isNaN(to)) {
-          const x_center_from = (from - 1) * padSpacing;
-          const x_center_to = (to - 1) * padSpacing;
-          const direction_mult = Math.sign(x_center_to - x_center_from);
-          const x1 = x_center_from + direction_mult * (padWidth / 2);
-          const x2 = x_center_to - direction_mult * (padWidth / 2);
+          const xCenterFrom = (from - 1) * padSpacing;
+          const xCenterTo = (to - 1) * padSpacing;
+          const directionMult = Math.sign(xCenterTo - xCenterFrom);
+          const x1 = xCenterFrom + directionMult * (padWidth / 2);
+          const x2 = xCenterTo - directionMult * (padWidth / 2);
           traces.push({
             type: "pcb_trace",
             pcb_trace_id: "",
