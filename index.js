@@ -37364,9 +37364,9 @@ var sodWithoutParsing15 = (parameters) => {
 // src/fn/solderjumper.ts
 var solderjumper = (params) => {
   const { num_pins, bridged, p = 2.54, pw = 1.5, ph = 1.5 } = params;
-  const padSpacing = p;
-  const padWidth = pw;
-  const padHeight = ph;
+  const padSpacing = length.parse(p);
+  const padWidth = length.parse(pw);
+  const padHeight = length.parse(ph);
   const traceWidth = Math.min(padHeight / 4, 0.5);
   const pads = [];
   for (let i = 0;i < num_pins; i++) {
@@ -37411,9 +37411,48 @@ var solderjumper = (params) => {
       }
     }
   }
-  const silk = silkscreenRef((num_pins - 1) * padSpacing / 2, Number(padHeight) + 0.1, 0.4);
+  const outlineWidth = (num_pins - 1) * padSpacing + padWidth + 0.7;
+  const outlineHeight = padHeight + 1;
+  const outlineCenterX = (num_pins - 1) * padSpacing / 2;
+  const outlineCenterY = 0;
+  console.log("outlineWidth", outlineWidth);
+  console.log("outlineHeight", outlineHeight);
+  console.log("outlineCenterX", outlineCenterX);
+  console.log("outlineCenterY", outlineCenterY);
+  const silkscreenRect = {
+    type: "pcb_silkscreen_path",
+    layer: "top",
+    pcb_component_id: "",
+    pcb_silkscreen_path_id: "outline",
+    route: [
+      {
+        x: outlineCenterX - outlineWidth / 2,
+        y: outlineCenterY - outlineHeight / 2
+      },
+      {
+        x: outlineCenterX + outlineWidth / 2,
+        y: outlineCenterY - outlineHeight / 2
+      },
+      {
+        x: outlineCenterX + outlineWidth / 2,
+        y: outlineCenterY + outlineHeight / 2
+      },
+      {
+        x: outlineCenterX - outlineWidth / 2,
+        y: outlineCenterY + outlineHeight / 2
+      },
+      {
+        x: outlineCenterX - outlineWidth / 2,
+        y: outlineCenterY - outlineHeight / 2
+      }
+    ],
+    stroke_width: 0.15
+  };
+  const refOffset = 0.6;
+  const refY = outlineCenterY + outlineHeight / 2 + refOffset;
+  const silk = silkscreenRef(outlineCenterX, refY, 0.4);
   return {
-    circuitJson: [...pads, ...traces, silk],
+    circuitJson: [...pads, ...traces, silkscreenRect, silk],
     parameters: params
   };
 };
@@ -37590,7 +37629,7 @@ var content_default = [
     title: "sod323f"
   },
   {
-    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="112.99435028248587" y="209.6045197740113" width="574.0112994350284" height="180.7909604519774"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="28.248587570621467" y="305.6497175141243" width="169.4915254237288" height="169.4915254237288"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="315.2542372881356" y="305.6497175141243" width="169.4915254237288" height="169.4915254237288"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="602.2598870056498" y="305.6497175141243" width="169.4915254237288" height="169.4915254237288"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 197.74011299435028 390.3954802259887 L 315.2542372881356 390.3954802259887" stroke-width="42.3728813559322" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 484.74576271186436 390.3954802259887 L 602.2598870056497 390.3954802259887" stroke-width="42.3728813559322" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="45.19774011299435" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,209.6045197740113)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
+    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="86.20689655172413" y="166.37931034482753" width="627.5862068965519" height="267.2413793103449"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="116.37931034482759" y="261.20689655172407" width="129.31034482758622" height="129.31034482758622"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="335.34482758620686" y="261.20689655172407" width="129.31034482758622" height="129.31034482758622"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="554.3103448275862" y="261.20689655172407" width="129.31034482758622" height="129.31034482758622"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 245.6896551724138 325.8620689655172 L 335.3448275862069 325.8620689655172" stroke-width="32.327586206896555" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 464.65517241379314 325.8620689655172 L 554.3103448275863 325.8620689655172" stroke-width="32.327586206896555" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><path class="pcb-silkscreen pcb-silkscreen-top" d="M 86.20689655172413 433.6206896551724 L 713.7931034482759 433.6206896551724 L 713.7931034482759 218.10344827586204 L 86.20689655172413 218.10344827586204 L 86.20689655172413 433.6206896551724 Z" fill="none" stroke="#f2eda1" stroke-width="12.931034482758621" data-pcb-component-id="" data-pcb-silkscreen-path-id="outline"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="34.48275862068966" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,166.37931034482753)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
     title: "solderjumper3_bridged123"
   },
   {
@@ -37762,7 +37801,7 @@ var content_default = [
     title: "quad-custom-thermalpad"
   },
   {
-    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="188.33333333333334" y="166.66666666666669" width="423.33333333333326" height="266.6666666666667"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="63.33333333333334" y="308.33333333333337" width="250" height="250"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="486.66666666666663" y="308.33333333333337" width="250" height="250"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="66.66666666666667" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,166.66666666666669)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
+    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="121.17647058823528" y="117.64705882352933" width="557.6470588235295" height="364.7058823529412"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="162.35294117647058" y="247.0588235294117" width="176.47058823529414" height="176.47058823529414"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="461.17647058823536" y="247.0588235294117" width="176.47058823529414" height="176.47058823529414"/><path class="pcb-silkscreen pcb-silkscreen-top" d="M 121.17647058823528 482.35294117647055 L 678.8235294117648 482.35294117647055 L 678.8235294117648 188.23529411764702 L 121.17647058823528 188.23529411764702 L 121.17647058823528 482.35294117647055 Z" fill="none" stroke="#f2eda1" stroke-width="17.647058823529413" data-pcb-component-id="" data-pcb-silkscreen-path-id="outline"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="47.05882352941177" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,117.64705882352933)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
     title: "solderjumper2"
   },
   {
@@ -37790,7 +37829,7 @@ var content_default = [
     title: "sot223_6"
   },
   {
-    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="112.99435028248587" y="209.6045197740113" width="574.0112994350284" height="180.7909604519774"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="28.248587570621467" y="305.6497175141243" width="169.4915254237288" height="169.4915254237288"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="315.2542372881356" y="305.6497175141243" width="169.4915254237288" height="169.4915254237288"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="602.2598870056498" y="305.6497175141243" width="169.4915254237288" height="169.4915254237288"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 197.74011299435028 390.3954802259887 L 315.2542372881356 390.3954802259887" stroke-width="42.3728813559322" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="45.19774011299435" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,209.6045197740113)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
+    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="86.20689655172413" y="166.37931034482753" width="627.5862068965519" height="267.2413793103449"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="116.37931034482759" y="261.20689655172407" width="129.31034482758622" height="129.31034482758622"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="335.34482758620686" y="261.20689655172407" width="129.31034482758622" height="129.31034482758622"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="554.3103448275862" y="261.20689655172407" width="129.31034482758622" height="129.31034482758622"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 245.6896551724138 325.8620689655172 L 335.3448275862069 325.8620689655172" stroke-width="32.327586206896555" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><path class="pcb-silkscreen pcb-silkscreen-top" d="M 86.20689655172413 433.6206896551724 L 713.7931034482759 433.6206896551724 L 713.7931034482759 218.10344827586204 L 86.20689655172413 218.10344827586204 L 86.20689655172413 433.6206896551724 Z" fill="none" stroke="#f2eda1" stroke-width="12.931034482758621" data-pcb-component-id="" data-pcb-silkscreen-path-id="outline"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="34.48275862068966" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,166.37931034482753)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
     title: "solderjumper3_bridged12"
   },
   {
@@ -37854,7 +37893,7 @@ var content_default = [
     title: "vssop10_p0.65mm"
   },
   {
-    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="100" y="220" width="600" height="160"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="25" y="305" width="150" height="150"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="625" y="305" width="150" height="150"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 175 380 L 625 380" stroke-width="37.5" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,220)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
+    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="78.43137254901961" y="178.43137254901956" width="643.1372549019607" height="243.13725490196083"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="105.88235294117645" y="264.70588235294116" width="117.64705882352942" height="117.64705882352942"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="576.470588235294" y="264.70588235294116" width="117.64705882352942" height="117.64705882352942"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 223.52941176470586 323.52941176470586 L 576.4705882352941 323.52941176470586" stroke-width="29.411764705882355" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><path class="pcb-silkscreen pcb-silkscreen-top" d="M 78.43137254901961 421.5686274509804 L 721.5686274509803 421.5686274509804 L 721.5686274509803 225.49019607843132 L 78.43137254901961 225.49019607843132 L 78.43137254901961 421.5686274509804 Z" fill="none" stroke="#f2eda1" stroke-width="11.764705882352942" data-pcb-component-id="" data-pcb-silkscreen-path-id="outline"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="31.372549019607845" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,178.43137254901956)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
     title: "solderjumper2bridged12p6"
   },
   {
@@ -38090,7 +38129,7 @@ var content_default = [
     title: "vssop10_h4.4mm_pl1.6mm_pw0.5mm_p0.9mm"
   },
   {
-    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="176.21145374449338" y="247.13656387665202" width="447.57709251101323" height="105.72687224669602"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="0" y="308.8105726872247" width="352.42290748898677" height="88.10572687224669"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="447.57709251101323" y="308.8105726872247" width="352.42290748898677" height="88.10572687224669"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 352.42290748898677 352.86343612334804 L 447.5770925110132 352.86343612334804" stroke-width="22.026431718061673" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="70.48458149779735" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,247.13656387665202)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
+    svgContent: '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 800 600"><style></style><rect class="boundary" x="0" y="0" fill="#000" width="800" height="600"/><rect class="pcb-boundary" fill="none" stroke="#fff" stroke-width="0.3" x="110.49723756906076" y="183.97790055248618" width="579.0055248618785" height="232.04419889502765"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="149.17127071823205" y="305.524861878453" width="220.99447513812154" height="55.248618784530386"/><rect class="pcb-pad" fill="rgb(200, 52, 52)" x="429.8342541436465" y="305.524861878453" width="220.99447513812154" height="55.248618784530386"/><path class="pcb-trace" stroke="rgb(200, 52, 52)" fill="none" d="M 370.16574585635357 333.1491712707182 L 429.8342541436464 333.1491712707182" stroke-width="13.812154696132596" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges" data-layer="top"/><path class="pcb-silkscreen pcb-silkscreen-top" d="M 110.49723756906076 416.0220994475138 L 689.5027624309392 416.0220994475138 L 689.5027624309392 250.27624309392263 L 110.49723756906076 250.27624309392263 L 110.49723756906076 416.0220994475138 Z" fill="none" stroke="#f2eda1" stroke-width="16.574585635359114" data-pcb-component-id="" data-pcb-silkscreen-path-id="outline"/><text x="0" y="0" fill="#f2eda1" font-family="Arial, sans-serif" font-size="44.19889502762431" text-anchor="middle" dominant-baseline="central" transform="matrix(1,0,0,1,400,183.97790055248618)" class="pcb-silkscreen-text pcb-silkscreen-top" data-pcb-silkscreen-text-id="pcb_component_1" stroke="#f2eda1" stroke-width="0">{REF}</text></svg>',
     title: "solderjumper2bridged12pw2ph0.5"
   },
   {
