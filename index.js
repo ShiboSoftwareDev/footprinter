@@ -35068,29 +35068,13 @@ var silkscreenPin = ({
   };
 };
 
-// src/fn/pinrow.ts
-var pinrow_def = z.object({
-  fn: z.string(),
-  num_pins: z.number().optional().default(6),
-  rows: z.union([z.string(), z.number()]).transform((val27) => Number(val27)).optional().default(1).describe("number of rows"),
-  p: length.default("0.1in").describe("pitch"),
-  id: length.default("1.0mm").describe("inner diameter"),
-  od: length.default("1.5mm").describe("outer diameter"),
-  male: z.boolean().optional().describe("for male pin headers"),
-  female: z.boolean().optional().describe("for female pin headers"),
-  pinlabeltextalignleft: z.boolean().optional().default(false),
-  pinlabeltextaligncenter: z.boolean().optional().default(false),
-  pinlabeltextalignright: z.boolean().optional().default(false),
-  pinlabelverticallyinverted: z.boolean().optional().default(false),
-  pinlabelorthogonal: z.boolean().optional().default(false),
-  nosquareplating: z.boolean().optional().default(false).describe("do not use rectangular pad for pin 1")
-}).transform((data) => {
-  const {
-    pinlabeltextalignleft,
-    pinlabeltextalignright,
-    pinlabelverticallyinverted,
-    pinlabelorthogonal
-  } = data;
+// src/helpers/determine-pin-label-anchor-side.ts
+function determinePinlabelAnchorSide({
+  pinlabeltextalignleft,
+  pinlabeltextalignright,
+  pinlabelverticallyinverted,
+  pinlabelorthogonal
+}) {
   let pinlabelAnchorSide = "top";
   if (pinlabelorthogonal && pinlabelverticallyinverted) {
     pinlabelAnchorSide = "left";
@@ -35123,6 +35107,27 @@ var pinrow_def = z.object({
       pinlabelAnchorSide = "left";
     }
   }
+  return pinlabelAnchorSide;
+}
+
+// src/fn/pinrow.ts
+var pinrow_def = z.object({
+  fn: z.string(),
+  num_pins: z.number().optional().default(6),
+  rows: z.union([z.string(), z.number()]).transform((val27) => Number(val27)).optional().default(1).describe("number of rows"),
+  p: length.default("0.1in").describe("pitch"),
+  id: length.default("1.0mm").describe("inner diameter"),
+  od: length.default("1.5mm").describe("outer diameter"),
+  male: z.boolean().optional().describe("for male pin headers"),
+  female: z.boolean().optional().describe("for female pin headers"),
+  pinlabeltextalignleft: z.boolean().optional().default(false),
+  pinlabeltextaligncenter: z.boolean().optional().default(false),
+  pinlabeltextalignright: z.boolean().optional().default(false),
+  pinlabelverticallyinverted: z.boolean().optional().default(false),
+  pinlabelorthogonal: z.boolean().optional().default(false),
+  nosquareplating: z.boolean().optional().default(false).describe("do not use rectangular pad for pin 1")
+}).transform((data) => {
+  const pinlabelAnchorSide = determinePinlabelAnchorSide(data);
   return {
     ...data,
     pinlabelAnchorSide,
