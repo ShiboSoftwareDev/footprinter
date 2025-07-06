@@ -50526,9 +50526,11 @@ var vssop = (raw_params) => {
   const pl = length.parse(parameters.pl || defaults.pl);
   const pw = length.parse(parameters.pw || defaults.pw);
   const pads = [];
+  const half = parameters.num_pins / 2;
   for (let i = 0;i < parameters.num_pins; i++) {
     const { x, y } = getVssopPadCoord(parameters.num_pins, i + 1, w, p);
-    pads.push(rectpad(i + 1, x, y, pl, pw));
+    const logical_pn = i < half ? i + 1 : parameters.num_pins - (i - half);
+    pads.push(rectpad(logical_pn, x, y, pl, pw));
   }
   const silkscreenBoxWidth = w;
   const silkscreenBoxHeight = h;
